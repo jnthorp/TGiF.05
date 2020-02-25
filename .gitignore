@@ -1,6 +1,12 @@
-*.pdf
+#data folders
 data/
 Data/
+
+#filetypes 
+*.pdf
+*.csv
+*.psydat
+*.log
 ~
 *._*
 .DS_Store

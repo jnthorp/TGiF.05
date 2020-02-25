@@ -7,7 +7,9 @@ Data/
 *.csv
 *.psydat
 *.log
-~
+*~*
 *._*
 .DS_Store
 .ipynb_*
+.
+..

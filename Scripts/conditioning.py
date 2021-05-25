@@ -14,7 +14,7 @@ If you publish work using this script the most relevant publication is:
 from __future__ import absolute_import, division
 
 import psychopy
-psychopy.useVersion('3.2.4')
+#psychopy.useVersion('3.2.4')
 
 
 from psychopy import locale_setup
@@ -37,7 +37,7 @@ _thisDir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(_thisDir)
 
 # Store info about the experiment session
-psychopyVersion = '3.2.4'
+psychopyVersion = '2020.1.2'
 expName = 'conditioning'  # from the Builder filename that created this script
 expInfo = {'participant': '', 'session': '001'}
 dlg = gui.DlgFromDict(dictionary=expInfo, sortKeys=False, title=expName)
@@ -67,7 +67,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 
 # Setup the Window
 win = visual.Window(
-    size=[1440, 900], fullscr=True, screen=0, 
+    fullscr=True, screen=0, 
     winType='pyglet', allowGUI=True, allowStencil=False,
     monitor='testMonitor', color='black', colorSpace='rgb',
     blendMode='avg', useFBO=True, 
@@ -132,34 +132,34 @@ import time
 ###Gus Code
 #######
 
-#def shock():
-#    port.setPin(2,1)
-#    time.sleep(.05)
-#    port.setPin(2,0)
+def shock():
+    port.setPin(9,1)
+    time.sleep(.05)
+    port.setPin(9,0)
 
-#def stamp_next_flip(on_or_offset):
-#    #stamp_df.loc[stamp_idx,'true_{:s}'.format(on_or_offset)] = clock.getTime()
-#    if 'on' in on_or_offset:
-#        onstamps.append(clock.getTime())
+def stamp_next_flip(on_or_offset):
+    #stamp_df.loc[stamp_idx,'true_{:s}'.format(on_or_offset)] = clock.getTime()
+    if 'on' in on_or_offset:
+        onstamps.append(clock.getTime())
         
-#    elif 'off' in on_or_offset:
-#        offstamps.append(clock.getTime())
+    elif 'off' in on_or_offset:
+        offstamps.append(clock.getTime())
 
-#def stamp_onoffset(on_or_offset,BIO=False,SHOCK=False):
-#    win.callOnFlip(stamp_next_flip,on_or_offset)
-#    
-#    if SHOCK: shock()
+def stamp_onoffset(on_or_offset,BIO=False,SHOCK=False):
+    win.callOnFlip(stamp_next_flip,on_or_offset)
     
-#    if BIO:
-#        if 'on' in on_or_offset:
-#            port.setPin(4,1)
+    if SHOCK: shock()
+    
+    if BIO:
+        if 'on' in on_or_offset:
+            port.setPin(2,1)
             
-#        elif 'off' in on_or_offset:
-#            port.setPin(4,0)
+        elif 'off' in on_or_offset:
+            port.setPin(2,0)
 
-#if BIO:
-#    port = parallel.ParallelPort(address=0xEFF8)
-#    port.setData(0)
+if BIO:
+    port = parallel.ParallelPort(address=0xEFF8)
+    port.setData(0)
 
 
 
@@ -188,12 +188,12 @@ random.seed()
 #expDir = os.path.join('/Users','jnthorp','Documents','TGIF')
 #expDir = os.path.join('/Users','john','Library','Mobile Documents','com~apple~CloudDocs','Documents','TGIF')
 expDir = os.path.dirname(os.getcwd())
-beach_scene_1 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-1.jpg') #pre-conditioning beach scene
-beach_scene_2 = os.path.join(expDir, 'Stimuli','conditioning','beach_scene-2.jpg') #pre-conditioning beach scene
+beach_scene_1 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-1.png') #pre-conditioning beach scene
+beach_scene_2 = os.path.join(expDir, 'Stimuli','conditioning','beach_scene-2.png') #pre-conditioning beach scene
 beach_scene = [beach_scene_1,beach_scene_2]
 beach_sound = os.path.join(expDir, 'Stimuli', 'conditioning','beach_sounds','*') #directory with the alternative beach scenes
-camp_scene_1 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-1.jpg') #pre-conditioning camp scene
-camp_scene_2 = os.path.join(expDir, 'Stimuli','conditioning','camp_scene-2.jpg') #pre-conditioning camp scene
+camp_scene_1 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-1.png') #pre-conditioning camp scene
+camp_scene_2 = os.path.join(expDir, 'Stimuli','conditioning','camp_scene-2.png') #pre-conditioning camp scene
 camp_scene = [camp_scene_1, camp_scene_2]
 camp_sound = os.path.join(expDir, 'Stimuli', 'conditioning','camp_sounds','*') #directory with the alternative camp scenes
 
@@ -234,11 +234,11 @@ trial_scene_scene = visual.ImageStim(
     win=win,
     name='trial_scene_scene', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0.05), size=(1.36, 0.85),
+    ori=0, pos=(0, 0.05), size=(0.85, 0.85),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=512, interpolate=True, depth=0.0)
-trial_scene_rating = visual.RatingScale(win=win, name='trial_scene_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=2, labels=['No', 'Yes'], scale='', singleClick=True, disappear=True, showAccept=False)
+trial_scene_rating = visual.RatingScale(win=win, name='trial_scene_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=2,  respKeys=['num_1','num_2'], labels=['No', 'Yes'], scale='', singleClick=True, disappear=True, showAccept=False)
 
 # Initialize components for Routine "blank_screen"
 blank_screenClock = core.Clock()
@@ -313,16 +313,17 @@ stims = stims.append(pd.DataFrame(list(zip(camp_scene_tile,
 sound_num = [random.randint(0,7) for i in range(len(stims))]
 
 #list full directory of sounds for both beach and camp
-beach_sound_full = glob.glob(beach_sound)
-camp_sound_full = glob.glob(camp_sound)
+beach_sound_full = [i for i in glob.glob(beach_sound) if '.DS_Store' not in i]
+camp_sound_full = [i for i in glob.glob(camp_sound) if '.DS_Store' not in i]
 
 stims = stims.sort_values('beach').reset_index(drop = True) #sort stims by beach so that sounds can be added properly
 
 #add paths of the sounds to be used for each trial, as determined by sound_num
+print(len(stims))
 stims['sound_path'] = [camp_sound_full[sound_num[i]] for i in range(0,int(trials/2))] + [beach_sound_full[sound_num[i]] for i in range(int(trials/2),trials)]
 
-#determine the iti for each trial, from 6 to 10 seconds
-stims["iti"] = (np.random.random(trials)-0.5)*4+8 #Determine the inter-trial interval, between 6 and 10 seconds
+#determine the iti for each trial, from 6 to 8 seconds
+stims["iti"] = (np.random.random(trials)-0.5)*2+7 #Determine the inter-trial interval, between 6 and 10 seconds
 
 #determine which trials to shock
 CSplus = list(counterbalance.CSplus[subj_idx]) #find CSplus in counterbalance
@@ -340,18 +341,18 @@ while 1:
 
     while index:
         l = index
-        if shuffle and shuffle[-1] > 1:
+        if shuffle:
             l = [x for x in l if stims.filename[x] != stims.filename[shuffle[-1]]]
-        elif shuffle and shuffle[-1] > 1 and stims.beach[shuffle[-1]] != stims.beach[shuffle[-2]] and stims.beach[shuffle[-2]] != stims.beach[shuffle[-3]]:
+        if len(shuffle) > 3 and stims.beach[shuffle[-1]] == stims.beach[shuffle[-2]] and stims.beach[shuffle[-1]] == stims.beach[shuffle[-3]]:
             l = [x for x in l if stims.beach[x] != stims.beach[shuffle[-1]]]
         if not l:
             #no valid solution
-            break 
+            break
+ 
         newEl = random.choice(l)
         shuffle.append(newEl)
         index.remove(newEl)
     if not index:
-        print(shuffle)
         break
 
 #shuffle the stims according to shuffle
@@ -519,7 +520,7 @@ win.flip()
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-trials = data.TrialHandler(nReps=3, method='random', 
+trials = data.TrialHandler(nReps=trials, method='random', 
     extraInfo=expInfo, originPath=-1,
     trialList=[None],
     seed=None, name='trials')
@@ -625,6 +626,10 @@ for thisTrial in trials:
     #win.flip()
     
     background_sound = sound.Sound(trial_sound)
+
+    mouse = psychopy.event.Mouse()
+    mouse.setVisible(0)
+
     # keep track of which components have finished
     trial_jitter_routineComponents = [trial_jitter_text]
     for thisComponent in trial_jitter_routineComponents:
@@ -701,7 +706,7 @@ for thisTrial in trials:
     
     background_sound.play()
     
-    #stamp_onoffset('onset',BIO=BIO,SHOCK=False)
+    stamp_onoffset('onset',BIO=BIO,SHOCK=False)
     start = clock.getTime()
     flag = True
     
@@ -748,6 +753,7 @@ for thisTrial in trials:
                 trial_scene_scene.frameNStop = frameN  # exact frame index
                 win.timeOnFlip(trial_scene_scene, 'tStopRefresh')  # time at next scr refresh
                 trial_scene_scene.setAutoDraw(False)
+
         # *trial_scene_rating* updates
         if trial_scene_rating.status == NOT_STARTED and t >= 0-frameTolerance:
             # keep track of start time/frame for later
@@ -756,9 +762,7 @@ for thisTrial in trials:
             trial_scene_rating.tStartRefresh = tThisFlipGlobal  # on global time
             win.timeOnFlip(trial_scene_rating, 'tStartRefresh')  # time at next scr refresh
             trial_scene_rating.setAutoDraw(True)
-        #if clock.getTime() > (start + 3.8) and flag:
-        #    stamp_onoffset('offset',BIO=BIO,SHOCK=False)
-        #    flag = False 
+
         
         if trial_scene_rating.noResponse == False:
             trial_scene_rating.setAutoDraw(False)
@@ -771,15 +775,18 @@ for thisTrial in trials:
         if not continueRoutine:  # a component has requested a forced-end of Routine
             break
         continueRoutine = False  # will revert to True if at least one component still running
-        for thisComponent in trial_scene_routineComponents:
-            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
-                continueRoutine = True
-                break  # at least one component has not yet finished
+        # for thisComponent in trial_scene_routineComponents:
+        #     if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+        #         continueRoutine = True
+        #         break  # at least one component has not yet finished
+        if trial_scene_scene.status != FINISHED:
+            continueRoutine = True
         
         # refresh the screen
         if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
             win.flip()
-    
+    ####Added by John, will shock on offset
+    stamp_onoffset('offset',BIO=BIO,SHOCK=SHOCK)
     # -------Ending Routine "trial_scene_routine"-------
     for thisComponent in trial_scene_routineComponents:
         if hasattr(thisComponent, "setAutoDraw"):
@@ -793,7 +800,7 @@ for thisTrial in trials:
     trials.addData('trial_scene_rating.stopped', trial_scene_rating.tStop)
     thisExp.nextEntry()
     
-# completed 3 repeats of 'trials'
+# completed 96 repeats of 'trials'
 
 
 # ------Prepare to start Routine "blank_screen"-------
@@ -802,10 +809,7 @@ routineTimer.add(0.500000)
 #win.callOnFlip(sendTrigger, code=4)
 #win.flip()
 
-stims['onset'] = onstamps
-stims['offset'] = offstamps
 
-pd.DataFrame.to_csv(stims,os.path.join(dataDir,'conditioning_stims.csv'))
 # keep track of which components have finished
 blank_screenComponents = [text_blank]
 for thisComponent in blank_screenComponents:
@@ -871,6 +875,11 @@ for thisComponent in blank_screenComponents:
         thisComponent.setAutoDraw(False)
 thisExp.addData('text_blank.started', text_blank.tStartRefresh)
 thisExp.addData('text_blank.stopped', text_blank.tStopRefresh)
+
+stims['onset'] = onstamps
+stims['offset'] = offstamps
+
+pd.DataFrame.to_csv(stims,os.path.join(dataDir,'conditioning_stims.csv'))
 
 # ------Prepare to start Routine "end_screen"-------
 routineTimer.add(2.000000)

@@ -14,7 +14,7 @@ If you publish work using this script the most relevant publication is:
 from __future__ import absolute_import, division
 
 import psychopy
-psychopy.useVersion('3.2.4')
+#psychopy.useVersion('3.2.4')
 
 
 from psychopy import locale_setup
@@ -69,7 +69,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 win = visual.Window(
     size=[1440, 900], fullscr=True, screen=0, 
     winType='pyglet', allowGUI=True, allowStencil=False,
-    monitor='testMonitor', color=[0,0,0], colorSpace='rgb',
+    monitor='testMonitor', color='black', colorSpace='rgb',
     blendMode='avg', useFBO=True, 
     units='height')
 # store frame rate of monitor if we can measure it
@@ -101,12 +101,12 @@ random.seed()
 #stimulus file
 #expDir = os.path.join('/Users','jnthorp','Documents','TGIF')
 #expDir = os.path.join('/Users','john','Library','Mobile Documents','com~apple~CloudDocs','Documents','TGIF')
-expDir = os.getcwd()
-beach_scene_1 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-1.jpg') #pre-conditioning beach scene
-beach_scene_2 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-2.jpg') #pre-conditioning beach scene
+expDir = os.path.dirname(os.getcwd())
+beach_scene_1 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-1.png') #pre-conditioning beach scene
+beach_scene_2 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-2.png') #pre-conditioning beach scene
 beach_sound = os.path.join(expDir, 'Stimuli', 'conditioning','beach_sounds','*') #directory with the alternative beach scenes
-camp_scene_1 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-1.jpg') #pre-conditioning camp scene
-camp_scene_2 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-2.jpg') #pre-conditioning camp scene
+camp_scene_1 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-1.png') #pre-conditioning camp scene
+camp_scene_2 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-2.png') #pre-conditioning camp scene
 camp_sound = os.path.join(expDir, 'Stimuli', 'conditioning','camp_sounds','*') #directory with the alternative camp scenes
 
 items_all_path = os.path.join(expDir,'Lists','test_demo_items.csv')
@@ -148,11 +148,11 @@ object_object = visual.ImageStim(
     win=win,
     name='object_object', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0), size=(0.2, 0.2),
+    ori=0, pos=(0, 0), size=(0.33, 0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=0.0)
-object_rating = visual.RatingScale(win=win, name='object_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=3, labels=['Old', 'Similar', 'New'], scale='', singleClick=True, disappear=True)
+object_rating = visual.RatingScale(win=win, name='object_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=3, respKeys=['num_1','num_2','num_3'], labels=['Old', 'Similar', 'New'], scale='', singleClick=True, disappear=True)
 
 # Initialize components for Routine "trial_scene_routine"
 trial_scene_routineClock = core.Clock()
@@ -160,7 +160,7 @@ trial_scene_beach_1 = visual.ImageStim(
     win=win,
     name='trial_scene_beach_1', 
     image='sin', mask=None,
-    ori=0, pos=(-0.4, 0.25), size=(0.7, 0.4),
+    ori=0, pos=(-0.4, 0.25), size=(0.48, 0.48),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-1.0)
@@ -168,7 +168,7 @@ trial_scene_beach_2 = visual.ImageStim(
     win=win,
     name='trial_scene_beach_2', 
     image='sin', mask=None,
-    ori=0, pos=(-0.4, -0.25), size=(0.7, 0.4),
+    ori=0, pos=(-0.4, -0.25), size=(0.48, 0.48),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-2.0)
@@ -176,7 +176,7 @@ trial_scene_camp_1 = visual.ImageStim(
     win=win,
     name='trial_scene_camp_1', 
     image='sin', mask=None,
-    ori=0, pos=(0.4, 0.25), size=(0.7, 0.4),
+    ori=0, pos=(0.4, 0.25), size=(0.48, 0.48),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-3.0)
@@ -184,7 +184,7 @@ trial_scene_camp_2 = visual.ImageStim(
     win=win,
     name='trial_scene_camp_2', 
     image='sin', mask=None,
-    ori=0, pos=(0.4, -0.25), size=(0.7, 0.4),
+    ori=0, pos=(0.4, -0.25), size=(0.48, 0.48),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-4.0)
@@ -195,7 +195,7 @@ trial_scene_object = visual.ImageStim(
     win=win,
     name='trial_scene_object', 
     image='sin', mask=None,
-    ori=0, pos=[0,0], size=(0.2, 0.2),
+    ori=0, pos=[0,0], size=(0.33, 0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-6.0)
@@ -206,7 +206,7 @@ trial_source_scene = visual.ImageStim(
     win=win,
     name='trial_source_scene', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0.05), size=(1.36, 0.85),
+    ori=0, pos=(0, 0.05), size=(0.85, 0.85),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-1.0)
@@ -217,7 +217,7 @@ trial_source_object = visual.ImageStim(
     win=win,
     name='trial_source_object', 
     image='sin', mask=None,
-    ori=0, pos=[0,0], size=(0.2, 0.2),
+    ori=0, pos=[0,0], size=(0.33, 0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-3.0)
@@ -759,7 +759,8 @@ for thisObjects_loop in objects_loop:
                             gotValidClick = True
                             trial_scene_pos.clicked_image.append(obj.image)
                     # abort routine on response
-                    continueRoutine = False
+                    if gotValidClick:
+                        continueRoutine = False
         
         # *trial_scene_object* updates
         if trial_scene_object.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:

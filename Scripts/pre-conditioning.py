@@ -14,7 +14,7 @@ If you publish work using this script the most relevant publication is:
 from __future__ import absolute_import, division
 
 import psychopy
-psychopy.useVersion('3.2.4')
+#psychopy.useVersion('3.2.4')
 
 
 from psychopy import locale_setup
@@ -92,30 +92,40 @@ init_routineClock = core.Clock()
 import random, xlrd, time, pickle, csv, pandas as pd, os #xlsxwriter and timer, pickle to save variables
 from psychopy.sound import Sound
 # import libraries and specify SCR port address
-#from psychopy import parallel
+from psychopy import parallel
 import time
 
-#port = parallel.PParallelInpOut32 (address = 0x0378 )
-#port = parallel.PParallelDLPortIO (address = 0x0378)
+BIO = True
+def stamp_next_flip(on_or_offset):
+    #stamp_df.loc[stamp_idx,'true_{:s}'.format(on_or_offset)] = clock.getTime()
+    if 'event' in on_or_offset:
+        if 'on' in on_or_offset:
+            event_onstamps.append(clock.getTime())
 
-#parallel.setPortAddress(0xEFF8)
-#port = parallel.ParallelPort(address = 0xEFF4) #auto-choose one of the above
+    else:
+        if 'on' in on_or_offset:
+            onstamps.append(clock.getTime())
+        
+        elif 'off' in on_or_offset:
+            offstamps.append(clock.getTime())
 
-#parallel.setData(255)  # sets all pins high
-#parallel.setData(0)  # sets all pins low
+def stamp_onoffset(on_or_offset,BIO=False,SHOCK=False):
+    win.callOnFlip(stamp_next_flip,on_or_offset)
+    
+    if BIO:
+        if 'on' in on_or_offset:
+            port.setPin(2,1)
+            
+        elif 'off' in on_or_offset:
+            port.setPin(2,0)
 
-#def send_markers(markers):
-#    for trig in markers:
-#        parallel.setData(trig)
-#        time.sleep(0.010)  # wait for 10 [ms]
+if BIO:
+    port = parallel.ParallelPort(address=0xEFF8)
+    port.setData(0)
 
-#markers = range(4)
-#send_markers(markers)
-
-#def sendTrigger(code):
-#    parallel.setData(code)
-#    core.wait(0.01)
-#    parallel.setData(0)
+onstamps = []
+offstamps = []
+event_onstamps = []
 
 #randomize the seed
 random.seed()
@@ -127,11 +137,11 @@ expDir = os.path.dirname(os.getcwd())
 dataDir = os.path.join(expDir,'Data')
 full_stim_path = os.path.join(expDir, 'Lists', 'stim_list.csv')
 counterbalance_path = os.path.join(expDir,'Lists','counterbalance.csv')
-beach_scene_1 = os.path.join(expDir,'Stimuli','pre-conditioning','beach_scene-1.jpg')
-beach_scene_2 = os.path.join(expDir,'Stimuli','pre-conditioning','beach_scene-2.jpg')
+beach_scene_1 = os.path.join(expDir,'Stimuli','pre-conditioning','beach_scene-1.png')
+beach_scene_2 = os.path.join(expDir,'Stimuli','pre-conditioning','beach_scene-2.png')
 beach_sound = os.path.join(expDir, 'Stimuli', 'pre-conditioning','beach_sound.wav')
-camp_scene_1 = os.path.join(expDir,'Stimuli','pre-conditioning','camp_scene-1.jpg')
-camp_scene_2 = os.path.join(expDir,'Stimuli','pre-conditioning','camp_scene-2.jpg')
+camp_scene_1 = os.path.join(expDir,'Stimuli','pre-conditioning','camp_scene-1.png')
+camp_scene_2 = os.path.join(expDir,'Stimuli','pre-conditioning','camp_scene-2.png')
 camp_sound = os.path.join(expDir, 'Stimuli', 'pre-conditioning','camp_sound.wav')
 
 #num of items total
@@ -139,7 +149,6 @@ num_events = 8
 num_trialspevent = 6
 
 num_trials = num_trialspevent*num_events
-
 
 # Initialize components for Routine "wait_S"
 wait_SClock = core.Clock()
@@ -158,9 +167,6 @@ event_init_routineClock = core.Clock()
 event_idx = 0
 
 rating = list()
-#current_arrow_trial
-#arrow_trial = 0
-
 
 # Initialize components for Routine "event_jitter_routine"
 event_jitter_routineClock = core.Clock()
@@ -178,7 +184,7 @@ event_onset_scene = visual.ImageStim(
     win=win,
     name='event_onset_scene', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0.05), size=(1.36, 0.85),
+    ori=0, pos=(0, 0.05), size=(0.85, 0.85),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=0.0)
@@ -194,7 +200,7 @@ trial_jitter_scene = visual.ImageStim(
     win=win,
     name='trial_jitter_scene', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0.05), size=(1.36, 0.85),
+    ori=0, pos=(0, 0.05), size=(0.85, 0.85),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=512, interpolate=True, depth=0.0)
@@ -205,7 +211,7 @@ trial_onset_scene = visual.ImageStim(
     win=win,
     name='trial_onset_scene', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0.05), size=(1.36, 0.85),
+    ori=0, pos=(0, 0.05), size=(0.85, 0.85),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=512, interpolate=True, depth=0.0)
@@ -213,11 +219,11 @@ trial_onset_object = visual.ImageStim(
     win=win,
     name='trial_onset_object', 
     image='sin', mask=None,
-    ori=0, pos=[0,0], size=(0.25,0.25),
+    ori=0, pos=[0,0], size=(0.33,0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
-    texRes=128, interpolate=True, depth=-1.0)
-trial_onset_rating = visual.RatingScale(win=win, name='trial_onset_rating', size=1.0, pos=[0.0, -0.85], low=1, high=5, labels=['Not likely at all', 'Not Sure', 'Very Likely'], scale='', singleClick=True, showAccept=False)
+    texRes=128, interpolate = True, depth=-1.0)
+trial_onset_rating = visual.RatingScale(win=win, name='trial_onset_rating', size=1.0, pos=[0.0, -0.85], low=1, high=3, respKeys=['num_1','num_2','num_3'], labels=['Unlikely', 'Not Sure', 'Likely'], scale='', singleClick=True, showAccept=False)
 
 # Initialize components for Routine "scene_sound_off"
 scene_sound_offClock = core.Clock()
@@ -248,6 +254,10 @@ routineTimer = core.CountdownTimer()  # to track time remaining of each (non-sli
 
 # ------Prepare to start Routine "init_routine"-------
 # update component parameters for each repeat
+
+
+mouse = psychopy.event.Mouse()
+mouse.setVisible(0)
 
 #access the xls stimulus file
 full_stims = pd.read_csv(full_stim_path)
@@ -310,13 +320,15 @@ subj_stims["event"] = np.concatenate([np.repeat(np.arange(1,num_events+1), num_t
 subj_stims = subj_stims.sort_values(by='event').reset_index(drop = True)
 
 #Create context variable, 1 = unshocked, even number context; 2 = shocked, odd number context
-subj_stims["context"] = np.tile(np.repeat([1,2], num_trialspevent), int(num_events/2))
+subj_stims["shocked_context"] = np.tile(np.repeat([True,False], num_trialspevent), int(num_events/2))
 
 #Shuffle the stimuli, then sort by event so that the order of congruent and incongruent stimuli is randomized across trials
 subj_stims = subj_stims.sample(frac=1).sort_values(by='event').reset_index(drop = True)
 subj_stims["iti"] = (np.random.random(num_trials)-0.5)*2+4 #Determine the inter-trial interval, between 3 and 5 seconds
-subj_stims["x"] = (np.random.random(num_trials)-0.5)*1.1 #x location that the item will display at
-subj_stims["y"] = (np.random.random(num_trials)-0.4)*0.5 #y location that the item will display at
+loc_range = np.array(range(-280,-50)) + np.array(range(50,280))
+rng = np.random.default_rng()
+subj_stims["x"] = rng.choice(loc_range, size = num_trials)/1000  #x location that the item will display at
+subj_stims["y"] = rng.choice(loc_range, size = num_trials)/1000 + 0.05 #y location that the item will display at
 
 #pd.DataFrame.to_csv(subj_stims,os.path.join(expDir,'Scripts','Protocol','old_stims.csv'))
 
@@ -344,7 +356,6 @@ events_df = pd.DataFrame(list(zip(events_idx,
                                   scenes,
                                   sounds)), columns = cols)
 
-subj_stims['scene'] = np.tile(events_df.scene, num_trialspevent)
 pd.DataFrame.to_csv(events_df,os.path.join(dataDir,'events.csv'))
 pd.DataFrame.to_csv(subj_stims,os.path.join(dataDir,'pre-conditioning_stims.csv'))
 # keep track of which components have finished
@@ -530,7 +541,7 @@ for thisEvent in events:
     #thisExp.addData('size_item', size_item[enc_order[enc_trial]])
     #thisExp.addData('enc_trial', enc_trial)
     #thisExp.nextEntry()
-    
+
     #Define the jitter, scene, and sound for the event
     event_iei = events_df.iei[event_idx]
     event_scene = events_df.scene[event_idx]
@@ -587,9 +598,6 @@ for thisEvent in events:
     for thisComponent in event_init_routineComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    #current_arrow_trial
-    #arrow_trial = 0
-    
     # the Routine "event_init_routine" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
@@ -670,11 +678,13 @@ for thisEvent in events:
     background_sound = sound.Sound(event_sound)
     #background_sound.setSound(event_sound)
     background_sound.play()
-    
+    stamp_onoffset('event_onset',BIO=BIO,SHOCK=False)
+    time.sleep(0.05)
+    stamp_onoffset('event_offset',BIO=BIO,SHOCK=False)
     #win.callOnFlip(sendTrigger, code=1)
     #win.flip()
     
-    rating_background = visual.RatingScale(win=win, name='rating_background', size=1.0, pos=[0.0, -0.85], low=1, high=5, labels=['Not likely at all', 'Not Sure', 'Very Likely'], scale='', lineColor = 'Gray', textColor = 'Gray', markerColor = 'Gray')
+    rating_background = visual.RatingScale(win=win, name='rating_background', size=1.0, pos=[0.0, -0.85], low=1, high=3, labels=['Unlikely', 'Not Sure', 'Likely'], scale='', lineColor = 'Gray', textColor = 'Gray', markerColor = 'Gray')
     rating_background.noResponse = False
     rating_background.setAutoDraw(True)
     # keep track of which components have finished
@@ -937,6 +947,7 @@ for thisEvent in events:
         continueRoutine = True
         
         # -------Run Routine "trial_onset_routine"-------
+        stamp_onoffset('onset',BIO=BIO,SHOCK=False)
         while continueRoutine:
             # get current time
             t = trial_onset_routineClock.getTime()
@@ -1002,7 +1013,8 @@ for thisEvent in events:
             # refresh the screen
             if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
                 win.flip()
-        
+                
+        stamp_onoffset('offset',BIO=BIO,SHOCK=False)
         # -------Ending Routine "trial_onset_routine"-------
         for thisComponent in trial_onset_routineComponents:
             if hasattr(thisComponent, "setAutoDraw"):

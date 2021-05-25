@@ -14,7 +14,7 @@ If you publish work using this script the most relevant publication is:
 from __future__ import absolute_import, division
 
 import psychopy
-psychopy.useVersion('3.2.4')
+#psychopy.useVersion('3.2.4')
 
 
 from psychopy import locale_setup
@@ -31,6 +31,38 @@ import os  # handy system and path functions
 import sys  # to get file system encoding
 
 from psychopy.hardware import keyboard
+from psychopy import parallel
+
+BIO = True
+def stamp_next_flip(on_or_offset):
+    #stamp_df.loc[stamp_idx,'true_{:s}'.format(on_or_offset)] = clock.getTime()
+    if 'event' in on_or_offset:
+        if 'on' in on_or_offset:
+            event_onstamps.append(clock.getTime())
+
+    else:
+        if 'on' in on_or_offset:
+            onstamps.append(clock.getTime())
+        
+        elif 'off' in on_or_offset:
+            offstamps.append(clock.getTime())
+
+def stamp_onoffset(on_or_offset,BIO=False,SHOCK=False):
+    win.callOnFlip(stamp_next_flip,on_or_offset)
+    
+    if BIO:
+        if 'on' in on_or_offset:
+            port.setPin(2,1)
+            
+        elif 'off' in on_or_offset:
+            port.setPin(2,0)
+
+if BIO:
+    port = parallel.ParallelPort(address=0xEFF8)
+    port.setData(0)
+
+onstamps = []
+offstamps = []
 
 # Ensure that relative paths start from the same directory as this script
 _thisDir = os.path.dirname(os.path.abspath(__file__))
@@ -48,7 +80,8 @@ expInfo['expName'] = expName
 expInfo['psychopyVersion'] = psychopyVersion
 
 # Data file name stem = absolute path + name; later add .psyexp, .csv, .log, etc
-filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expInfo['participant'], expName, expInfo['date'])
+#filename = _thisDir + os.sep + u'data/%s_%s_%s' % (expInfo['participant'], expName, expInfo['date'])
+filename = os.path.dirname(_thisDir) + os.sep + u'Data/%s/%s_%s_%s' % (expInfo['participant'], expInfo['participant'], expName, expInfo['date'])
 
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
@@ -69,7 +102,7 @@ frameTolerance = 0.001  # how close to onset before 'same' frame
 win = visual.Window(
     size=[1440, 900], fullscr=True, screen=0, 
     winType='pyglet', allowGUI=True, allowStencil=False,
-    monitor='testMonitor', color=[0,0,0], colorSpace='rgb',
+    monitor='testMonitor', color='black', colorSpace='rgb',
     blendMode='avg', useFBO=True, 
     units='height')
 # store frame rate of monitor if we can measure it
@@ -101,12 +134,12 @@ random.seed()
 #stimulus file
 #expDir = os.path.join('/Users','jnthorp','Documents','TGIF')
 #expDir = os.path.join('/Users','john','Library','Mobile Documents','com~apple~CloudDocs','Documents','TGIF')
-expDir = os.getcwd()
-beach_scene_1 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-1.jpg') #pre-conditioning beach scene
-beach_scene_2 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-2.jpg') #pre-conditioning beach scene
+expDir = os.path.dirname(os.getcwd())
+beach_scene_1 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-1.png') #pre-conditioning beach scene
+beach_scene_2 = os.path.join(expDir,'Stimuli','conditioning','beach_scene-2.png') #pre-conditioning beach scene
 beach_sound = os.path.join(expDir, 'Stimuli', 'conditioning','beach_sounds','*') #directory with the alternative beach scenes
-camp_scene_1 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-1.jpg') #pre-conditioning camp scene
-camp_scene_2 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-2.jpg') #pre-conditioning camp scene
+camp_scene_1 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-1.png') #pre-conditioning camp scene
+camp_scene_2 = os.path.join(expDir,'Stimuli','conditioning','camp_scene-2.png') #pre-conditioning camp scene
 camp_sound = os.path.join(expDir, 'Stimuli', 'conditioning','camp_sounds','*') #directory with the alternative camp scenes
 
 items_all_path = os.path.join(expDir,'Lists','stim_list.csv')
@@ -147,11 +180,11 @@ object_object = visual.ImageStim(
     win=win,
     name='object_object', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0), size=(0.2, 0.2),
+    ori=0, pos=(0, 0), size=(0.33, 0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=0.0)
-object_rating = visual.RatingScale(win=win, name='object_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=3, labels=['Old', 'Similar', 'New'], scale='', singleClick=True, disappear=True)
+object_rating = visual.RatingScale(win=win, name='object_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=3,  respKeys=['num_1','num_2','num_3'], labels=['Old', 'Similar', 'New'], scale='', singleClick=True, disappear=True)
 
 # Initialize components for Routine "trial_scene_routine"
 trial_scene_routineClock = core.Clock()
@@ -159,7 +192,7 @@ trial_scene_beach_1 = visual.ImageStim(
     win=win,
     name='trial_scene_beach_1', 
     image='sin', mask=None,
-    ori=0, pos=(-0.4, 0.25), size=(0.7, 0.4),
+    ori=0, pos=(-0.4, 0.25), size=(0.48, 0.48),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-1.0)
@@ -167,7 +200,7 @@ trial_scene_beach_2 = visual.ImageStim(
     win=win,
     name='trial_scene_beach_2', 
     image='sin', mask=None,
-    ori=0, pos=(-0.4, -0.25), size=(0.7, 0.4),
+    ori=0, pos=(-0.4, -0.25), size=(0.48, 0.48),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-2.0)
@@ -175,7 +208,7 @@ trial_scene_camp_1 = visual.ImageStim(
     win=win,
     name='trial_scene_camp_1', 
     image='sin', mask=None,
-    ori=0, pos=(0.4, 0.25), size=(0.7, 0.4),
+    ori=0, pos=(0.4, 0.25), size=(0.48, 0.48),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-3.0)
@@ -183,7 +216,7 @@ trial_scene_camp_2 = visual.ImageStim(
     win=win,
     name='trial_scene_camp_2', 
     image='sin', mask=None,
-    ori=0, pos=(0.4, -0.25), size=(0.7, 0.4),
+    ori=0, pos=(0.4, -0.25), size=(0.48, 0.48),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-4.0)
@@ -194,7 +227,7 @@ trial_scene_object = visual.ImageStim(
     win=win,
     name='trial_scene_object', 
     image='sin', mask=None,
-    ori=0, pos=[0,0], size=(0.2, 0.2),
+    ori=0, pos=[0,0], size=(0.33, 0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-6.0)
@@ -205,7 +238,7 @@ trial_source_scene = visual.ImageStim(
     win=win,
     name='trial_source_scene', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0.05), size=(1.36, 0.85),
+    ori=0, pos=(0, 0.05), size=(0.85, 0.85),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-1.0)
@@ -216,7 +249,7 @@ trial_source_object = visual.ImageStim(
     win=win,
     name='trial_source_object', 
     image='sin', mask=None,
-    ori=0, pos=[0,0], size=(0.2, 0.2),
+    ori=0, pos=[0,0], size=(0.33, 0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-3.0)
@@ -234,7 +267,6 @@ key_resp = keyboard.Keyboard()
 
 # Initialize components for Routine "scene_init_routine"
 scene_init_routineClock = core.Clock()
-num_scenes = 96
 scene = 0
 
 # Initialize components for Routine "scene_jitter_routine"
@@ -253,11 +285,11 @@ scene_image = visual.ImageStim(
     win=win,
     name='scene_image', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0.05), size=(1.36, 0.85),
+    ori=0, pos=(0, 0.05), size=(0.85, 0.85),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=512, interpolate=True, depth=0.0)
-scene_rating = visual.RatingScale(win=win, name='scene_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=2, labels=['Old', 'New'], scale='', disappear=True)
+scene_rating = visual.RatingScale(win=win, name='scene_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=2, respKeys=['num_1','num_2'], labels=['Old', 'New'], scale='', singleClick=True, disappear=True)
 
 # Initialize components for Routine "end_screen"
 end_screenClock = core.Clock()
@@ -314,13 +346,18 @@ new_stim_indices = pd.DataFrame(list(zip(new_items,
 
 new_stims = items_all[items_all.index.isin(pd.merge(items_all, new_stim_indices)['Unnamed: 0'])].reset_index(drop = True)
 #new_stims['context'] = np.repeat([1,2,1,2], int(len(new_stims)/4))
+old_stims['type'] = 'Old'
+similar_stims['type'] = 'Similar'
+new_stims['type'] = 'New'
 
 stims = old_stims.append([similar_stims, new_stims]).reset_index(drop = True).drop('iti',axis = 1)
 stims = stims.sample(frac=1).reset_index(drop = True)
+pd.DataFrame.to_csv(stims,os.path.join(dataDir,'test_items.csv'))
 
 scenes = pd.read_csv(scenes_all_path)
 scenes['old'] = scenes.group == int(counterbalance.conditioning[subj_idx])
 scenes = scenes.sample(frac=1).reset_index(drop = True)
+pd.DataFrame.to_csv(scenes,os.path.join(dataDir,'test_scenes.csv'))
 
 mouse = psychopy.event.Mouse()
 mouse.setVisible(0)
@@ -479,7 +516,7 @@ win.flip()
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-objects_loop = data.TrialHandler(nReps=2, method='sequential', 
+objects_loop = data.TrialHandler(nReps=len(stims.path), method='sequential', 
     extraInfo=expInfo, originPath=-1,
     trialList=[None],
     seed=None, name='objects_loop')
@@ -502,7 +539,7 @@ for thisObjects_loop in objects_loop:
     #assigning the enc item
     trial_iti = 2
     trial_item = stims.path[trial]
-    trial_context = stims.context[trial]
+    #trial_context = stims.shocked_context[trial]
     #trial_scene = scene_order[int(trial_context-1)]
     item_pos = (0,0)
     #log enc information to data file
@@ -648,6 +685,8 @@ for thisObjects_loop in objects_loop:
     # update component parameters for each repeat
     object_object.setImage(trial_item)
     object_rating.reset()
+    stamp_onoffset('onset',BIO=BIO,SHOCK=False)
+    time.sleep(0.05)
     #background_sound = sound.Sound(trial_sound)
     #background_sound.play()
     
@@ -714,7 +753,8 @@ for thisObjects_loop in objects_loop:
         # refresh the screen
         if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
             win.flip()
-    
+
+    stamp_onoffset('offset',BIO=BIO,SHOCK=False)
     # -------Ending Routine "trial_object_routine"-------
     for thisComponent in trial_object_routineComponents:
         if hasattr(thisComponent, "setAutoDraw"):
@@ -832,7 +872,8 @@ for thisObjects_loop in objects_loop:
                             gotValidClick = True
                             trial_scene_pos.clicked_image.append(obj.image)
                     # abort routine on response
-                    continueRoutine = False
+                    if gotValidClick:
+                        continueRoutine = False
         
         # *trial_scene_object* updates
         if trial_scene_object.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
@@ -909,7 +950,7 @@ for thisObjects_loop in objects_loop:
     if rating == 3:
         continueRoutine = False
     
-    mouse.setPos((0,0))
+    mouse.setPos((0,0.05))
     trial_source_scene.setImage(trial_scene)
     # setup some python lists for storing info about the trial_source_pos
     gotValidClick = False  # until a click is received
@@ -1020,8 +1061,6 @@ for thisObjects_loop in objects_loop:
     # the Routine "trial_source_routine" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     thisExp.nextEntry()
-    
-# completed 2 repeats of 'objects_loop'
 
 
 # ------Prepare to start Routine "blank_screen"-------
@@ -1125,8 +1164,15 @@ thisExp.nextEntry()
 # the Routine "blank_screen" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 
+# save item stimuli
+stims["onsets"] = onstamps
+stims["offsets"] = offstamps
+onstamps = list()
+offstamps = list()
+pd.DataFrame.to_csv(stims,os.path.join(dataDir,'test_items.csv'))
+
 # set up handler to look after randomisation of conditions etc
-scenes_loop = data.TrialHandler(nReps=num_scenes, method='sequential', 
+scenes_loop = data.TrialHandler(nReps=len(scenes.path), method='sequential', 
     extraInfo=expInfo, originPath=-1,
     trialList=[None],
     seed=None, name='scenes_loop')
@@ -1293,6 +1339,8 @@ for thisScenes_loop in scenes_loop:
     # update component parameters for each repeat
     scene_image.setImage(scene_scene)
     scene_rating.reset()
+    stamp_onoffset('onset',BIO=BIO,SHOCK=False)
+    
     #background_sound = sound.Sound(trial_sound)
     #background_sound.play()
     
@@ -1359,7 +1407,8 @@ for thisScenes_loop in scenes_loop:
         # refresh the screen
         if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
             win.flip()
-    
+
+    stamp_onoffset('offset',BIO=BIO,SHOCK=False)
     # -------Ending Routine "scene_scene_routine"-------
     for thisComponent in scene_scene_routineComponents:
         if hasattr(thisComponent, "setAutoDraw"):
@@ -1397,6 +1446,7 @@ _timeToFirstFrame = win.getFutureFlipTime(clock="now")
 end_screenClock.reset(-_timeToFirstFrame)  # t0 is time of first possible flip
 frameN = -1
 continueRoutine = True
+
 
 # -------Run Routine "end_screen"-------
 while continueRoutine and routineTimer.getTime() > 0:
@@ -1440,6 +1490,10 @@ while continueRoutine and routineTimer.getTime() > 0:
     # refresh the screen
     if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
         win.flip()
+
+scenes["onsets"] = onstamps
+scenes["offsets"] = offstamps
+pd.DataFrame.to_csv(scenes,os.path.join(dataDir,'test_scenes.csv'))
 
 # -------Ending Routine "end_screen"-------
 for thisComponent in end_screenComponents:

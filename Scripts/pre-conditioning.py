@@ -144,12 +144,6 @@ camp_scene_1 = os.path.join(expDir,'Stimuli','pre-conditioning','camp_scene-1.pn
 camp_scene_2 = os.path.join(expDir,'Stimuli','pre-conditioning','camp_scene-2.png')
 camp_sound = os.path.join(expDir, 'Stimuli', 'pre-conditioning','camp_sound.wav')
 
-#num of items total
-num_events = 8
-num_trialspevent = 6
-
-num_trials = num_trialspevent*num_events
-
 # Initialize components for Routine "wait_S"
 wait_SClock = core.Clock()
 text_waitS = visual.TextStim(win=win, name='text_waitS',
@@ -267,7 +261,7 @@ counterbalance = pd.read_csv(counterbalance_path)
 ##Generate subject-specific stim list
 #############
 
-colnames = ['item', 'object']
+colnames = ['item']
 random.seed()
 
 subj_num = int(expInfo['participant'])
@@ -277,11 +271,10 @@ dataDir = os.path.join(expDir,'data',str(subj_num))
 if not os.path.exists(dataDir):
     os.makedirs(dataDir)
 
-items_to_show = np.unique(full_stims.item[(full_stims.group == int(counterbalance.old[subj_idx])) | (full_stims.group == int(counterbalance.similar[subj_idx]))])
+items_to_show = np.unique(full_stims.item[(full_stims.group == int(counterbalance.old[subj_idx]))])
 
 #Randomize which exemplar of each item is shown to the participant
-oldies = pd.DataFrame(list(zip(items_to_show,
-                               np.random.randint(2, size = len(items_to_show)) + 1)),
+oldies = pd.DataFrame(list(zip(items_to_show)),
                       columns = colnames)
 
 
@@ -289,8 +282,8 @@ oldies = pd.DataFrame(list(zip(items_to_show,
 full_stims['old'] = full_stims.index.isin(pd.merge(full_stims, oldies)['Unnamed: 0'])
 
 #num of items total
-num_events = 16
-num_trialspevent = 12
+num_events = 12
+num_trialspevent = 10
 
 num_trials = num_trialspevent*num_events
 
@@ -330,7 +323,6 @@ rng = np.random.default_rng()
 subj_stims["x"] = rng.choice(loc_range, size = num_trials)/1000  #x location that the item will display at
 subj_stims["y"] = rng.choice(loc_range, size = num_trials)/1000 + 0.05 #y location that the item will display at
 
-#pd.DataFrame.to_csv(subj_stims,os.path.join(expDir,'Scripts','Protocol','old_stims.csv'))
 
 ###########Event variables#############
 #Generate the columns for the event dataframe, which is dependent on which context is CS+
@@ -534,14 +526,6 @@ for thisEvent in events:
     # ------Prepare to start Routine "event_init_routine"-------
     # update component parameters for each repeat
     
-    #log enc information to data file
-    #thisExp.addData('image_item', image_item[enc_order[enc_trial]])
-    #thisExp.addData('emotion_item', emotion_item[enc_order[enc_trial]])
-    #thisExp.addData('old_new', old_new[enc_order[enc_trial]])
-    #thisExp.addData('size_item', size_item[enc_order[enc_trial]])
-    #thisExp.addData('enc_trial', enc_trial)
-    #thisExp.nextEntry()
-
     #Define the jitter, scene, and sound for the event
     event_iei = events_df.iei[event_idx]
     event_scene = events_df.scene[event_idx]
@@ -774,23 +758,13 @@ for thisEvent in events:
         
         # ------Prepare to start Routine "trial_init_routine"-------
         # update component parameters for each repeat
-        #assigning the enc item
-        #ImageFile2 = image_item2[enc_order2[enc_trial2]]
-        #Size2 = size_item2[enc_order2[enc_trial2]]
+
         trial_iti = subj_stims.iti[trial]
         trial_item = subj_stims.path[trial]
         trial_x = subj_stims.x[trial]
         trial_y = subj_stims.y[trial]
         trial_loc = [subj_stims.x[trial],subj_stims.y[trial]]
-        
-        #log enc information to data file
-        #thisExp.addData('image_item', image_item2[enc_order2[enc_trial2]])
-        #thisExp.addData('emotion_item', emotion_item2[enc_order2[enc_trial2]])
-        #thisExp.addData('old_new', old_new2[enc_order2[enc_trial2]])
-        #thisExp.addData('size_item', size_item2[enc_order2[enc_trial2]])
-        #thisExp.addData('enc_trial', enc_trial2)
-        #thisExp.nextEntry()
-        
+
         #increment the current enc item counter
         trial = trial + 1
         

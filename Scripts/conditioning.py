@@ -98,35 +98,8 @@ BIO = True
 #from psychopy import parallel
 import time
 
-#port = parallel.PParallelInpOut32 (address = 0x0378 )
-#port = parallel.PParallelDLPortIO (address = 0x0378)
 
-#parallel.setPortAddress(0xEFF8)
 
-########
-###Monika code
-########
-
-#If it seems real, putting
-#####
-#before it
-#####port = parallel.ParallelPort(address = 0xEFF4) #auto-choose one of the above
-
-#parallel.setData(255)  # sets all pins high
-#parallel.setData(0)  # sets all pins low
-
-####def send_markers(markers):
-####    for trig in markers:
-####        parallel.setData(trig)
-####        time.sleep(0.010)  # wait for 10 [ms]
-
-####markers = range(4)
-####send_markers(markers)
-
-####def sendTrigger(code):
-####    parallel.setData(code)
-####    core.wait(0.01)
-####    parallel.setData(0)
 
 #######
 ###Gus Code
@@ -163,24 +136,6 @@ if BIO:
 
 
 
-#######
-### Brian Code
-#######
-
-#parallel.setPortAddress(61432)
-#pin=parallel.readPin(9) 
-
-#def player_is_shocked(reason):
-#shockYN=1
-#pin=parallel.readPin(9)
-#if pin==1 and shockYN==1:
-#    parallel.setPin(9,0)
-#    shockYN=0
-#  elif pin==0 and shockYN==1:
-#    parallel.setPin(9,1)
-#    shockYN=0
-
-#print('the player received a shock, reason: %s' % reason)
 #randomize the seed
 random.seed()
 
@@ -699,7 +654,7 @@ for thisTrial in trials:
     routineTimer.reset()
     
     # ------Prepare to start Routine "trial_scene_routine"-------
-    routineTimer.add(4.000000)
+    routineTimer.add(6.000000)
     # update component parameters for each repeat
     trial_scene_scene.setImage(trial_item)
     trial_scene_rating.reset()
@@ -747,7 +702,7 @@ for thisTrial in trials:
             trial_scene_scene.setAutoDraw(True)
         if trial_scene_scene.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > trial_scene_scene.tStartRefresh + 4-frameTolerance:
+            if tThisFlipGlobal > trial_scene_scene.tStartRefresh + 6-frameTolerance:
                 # keep track of stop time/frame for later
                 trial_scene_scene.tStop = t  # not accounting for scr refresh
                 trial_scene_scene.frameNStop = frameN  # exact frame index
@@ -806,8 +761,6 @@ for thisTrial in trials:
 # ------Prepare to start Routine "blank_screen"-------
 routineTimer.add(0.500000)
 # update component parameters for each repeat
-#win.callOnFlip(sendTrigger, code=4)
-#win.flip()
 
 
 # keep track of which components have finished

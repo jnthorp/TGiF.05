@@ -1,5 +1,6 @@
-# TGiF.01
-last updated by John Thorp - 02/25/20
+# TGiF.02
+last updated by John Thorp - 05/25/21
+Converted from TGiF.01, which had Old/Similar/New item memory test. Now just Old/New item memory.
 
 ## Contents
 

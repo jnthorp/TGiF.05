@@ -160,7 +160,7 @@ wait_key = keyboard.Keyboard()
 
 # Initialize components for Routine "trial_init_routine"
 trial_init_routineClock = core.Clock()
-trials = 288
+trials = 240
 trial = 0
 trial_jitter_time = 2
 
@@ -180,11 +180,23 @@ object_object = visual.ImageStim(
     win=win,
     name='object_object', 
     image='sin', mask=None,
-    ori=0, pos=(0, 0), size=(0.33, 0.33),
+    ori=0, pos=(0, 0.05), size=(0.33, 0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=0.0)
-object_rating = visual.RatingScale(win=win, name='object_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=3,  respKeys=['num_1','num_2','num_3'], labels=['Old', 'Similar', 'New'], scale='', singleClick=True, disappear=True)
+object_rating = visual.RatingScale(win=win, name='object_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=2,  respKeys=['num_1','num_2'], labels=['New', 'Old'], scale='', singleClick=True, disappear=True)
+
+# Initialize components for Routine "trial_confidence_routine"
+trial_confidence_routineClock = core.Clock()
+confidence_object = visual.ImageStim(
+    win=win,
+    name='object_object', 
+    image='sin', mask=None,
+    ori=0, pos=(0, 0.05), size=(0.33, 0.33),
+    color=[1,1,1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=0.0)
+confidence_rating = visual.RatingScale(win=win, name='confidence_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=3,  respKeys=['num_1','num_2','num_3'], labels=['Guess', 'Low', 'High'], scale='', singleClick=True, disappear=True)
 
 # Initialize components for Routine "trial_scene_routine"
 trial_scene_routineClock = core.Clock()
@@ -227,7 +239,7 @@ trial_scene_object = visual.ImageStim(
     win=win,
     name='trial_scene_object', 
     image='sin', mask=None,
-    ori=0, pos=[0,0], size=(0.33, 0.33),
+    ori=0, pos=[0,0.05], size=(0.33, 0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-6.0)
@@ -249,7 +261,7 @@ trial_source_object = visual.ImageStim(
     win=win,
     name='trial_source_object', 
     image='sin', mask=None,
-    ori=0, pos=[0,0], size=(0.33, 0.33),
+    ori=0, pos=[0,0.05], size=(0.33, 0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-3.0)
@@ -289,7 +301,7 @@ scene_image = visual.ImageStim(
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=512, interpolate=True, depth=0.0)
-scene_rating = visual.RatingScale(win=win, name='scene_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=2, respKeys=['num_1','num_2'], labels=['Old', 'New'], scale='', singleClick=True, disappear=True)
+scene_rating = visual.RatingScale(win=win, name='scene_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=2, respKeys=['num_1','num_2'], labels=['New', 'Old'], scale='', singleClick=True, disappear=True)
 
 # Initialize components for Routine "end_screen"
 end_screenClock = core.Clock()
@@ -328,29 +340,9 @@ subj_stims = pd.read_csv(subj_stims_path)
 
 random.seed()
 
-old_stims = subj_stims[subj_stims.group == int(counterbalance.old[subj_idx])].reset_index(drop=True)
-old_similar_stims = subj_stims[subj_stims.group == int(counterbalance.similar[subj_idx])].sort_values(by = 'item').reset_index(drop=True)
-new_items = np.unique(items_all.item[(items_all.group == int(counterbalance.new[subj_idx]))])
-
-similar_stim_items = old_similar_stims[['item','object']]
-all_similar_stims = items_all[items_all.group == int(counterbalance.similar[subj_idx])]
-
-new_similar_stims = all_similar_stims[~all_similar_stims.index.isin(pd.merge(items_all, similar_stim_items)['Unnamed: 0'])].reset_index(drop = True)
-new_similar_stims = new_similar_stims.sort_values('item').reset_index(drop = True)
-similar_stims = old_similar_stims.assign(filename = new_similar_stims['filename'].tolist(), object = new_similar_stims['object'].tolist()).reset_index(drop = True)
-
-#Randomize which exemplar of each item is shown to the participant
-new_stim_indices = pd.DataFrame(list(zip(new_items,
-                               np.random.randint(2, size = len(new_items)) + 1)),
-                      columns = ['item','object'])
-
-new_stims = items_all[items_all.index.isin(pd.merge(items_all, new_stim_indices)['Unnamed: 0'])].reset_index(drop = True)
-#new_stims['context'] = np.repeat([1,2,1,2], int(len(new_stims)/4))
-old_stims['type'] = 'Old'
-similar_stims['type'] = 'Similar'
-new_stims['type'] = 'New'
-
-stims = old_stims.append([similar_stims, new_stims]).reset_index(drop = True).drop('iti',axis = 1)
+stims = items_all
+stims['old'] = stims.group == int(counterbalance.old[subj_idx])
+stims['type'] = ["old" if i else "new" for i in stims.old]
 stims = stims.sample(frac=1).reset_index(drop = True)
 pd.DataFrame.to_csv(stims,os.path.join(dataDir,'test_items.csv'))
 
@@ -541,14 +533,7 @@ for thisObjects_loop in objects_loop:
     trial_item = stims.path[trial]
     #trial_context = stims.shocked_context[trial]
     #trial_scene = scene_order[int(trial_context-1)]
-    item_pos = (0,0)
-    #log enc information to data file
-    #thisExp.addData('image_item', image_item2[enc_order2[enc_trial2]])
-    #thisExp.addData('emotion_item', emotion_item2[enc_order2[enc_trial2]])
-    #thisExp.addData('old_new', old_new2[enc_order2[enc_trial2]])
-    #thisExp.addData('size_item', size_item2[enc_order2[enc_trial2]])
-    #thisExp.addData('enc_trial', enc_trial2)
-    #thisExp.nextEntry()
+    item_pos = (0,0.05)
     
     #increment the current enc item counter
     trial = trial + 1
@@ -611,8 +596,7 @@ for thisObjects_loop in objects_loop:
     
     # ------Prepare to start Routine "trial_jitter_routine"-------
     # update component parameters for each repeat
-    #win.callOnFlip(sendTrigger, code=1)
-    #win.flip()
+
     # keep track of which components have finished
     trial_jitter_routineComponents = [trial_jitter_cross]
     for thisComponent in trial_jitter_routineComponents:
@@ -686,12 +670,7 @@ for thisObjects_loop in objects_loop:
     object_object.setImage(trial_item)
     object_rating.reset()
     stamp_onoffset('onset',BIO=BIO,SHOCK=False)
-    time.sleep(0.05)
-    #background_sound = sound.Sound(trial_sound)
-    #background_sound.play()
-    
-    #win.callOnFlip(sendTrigger, code=1)
-    #win.flip()
+
     # keep track of which components have finished
     trial_object_routineComponents = [object_object, object_rating]
     for thisComponent in trial_object_routineComponents:
@@ -754,7 +733,6 @@ for thisObjects_loop in objects_loop:
         if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
             win.flip()
 
-    stamp_onoffset('offset',BIO=BIO,SHOCK=False)
     # -------Ending Routine "trial_object_routine"-------
     for thisComponent in trial_object_routineComponents:
         if hasattr(thisComponent, "setAutoDraw"):
@@ -767,17 +745,100 @@ for thisObjects_loop in objects_loop:
     objects_loop.addData('object_rating.started', object_rating.tStart)
     objects_loop.addData('object_rating.stopped', object_rating.tStop)
     rating = object_rating.getRating()
-    if rating == 3:
-        trial_jitter_time = 6
-    else:
-        trial_jitter_time = 2
     # the Routine "trial_object_routine" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
     
+    # ------Prepare to start Routine "trial_confidence_routine"-------
+    # update component parameters for each repeat
+    confidence_object.setImage(trial_item)
+    confidence_rating.reset()
+
+    # keep track of which components have finished
+    trial_confidence_routineComponents = [confidence_object, confidence_rating]
+    for thisComponent in trial_confidence_routineComponents:
+        thisComponent.tStart = None
+        thisComponent.tStop = None
+        thisComponent.tStartRefresh = None
+        thisComponent.tStopRefresh = None
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+    # reset timers
+    t = 0
+    _timeToFirstFrame = win.getFutureFlipTime(clock="now")
+    trial_confidence_routineClock.reset(-_timeToFirstFrame)  # t0 is time of first possible flip
+    frameN = -1
+    continueRoutine = True
+    
+    # -------Run Routine "trial_confidence_routine"-------
+    while continueRoutine:
+        # get current time
+        t = trial_confidence_routineClock.getTime()
+        tThisFlip = win.getFutureFlipTime(clock=trial_confidence_routineClock)
+        tThisFlipGlobal = win.getFutureFlipTime(clock=None)
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        
+        # *confidence_object* updates
+        if confidence_object.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+            # keep track of start time/frame for later
+            confidence_object.frameNStart = frameN  # exact frame index
+            confidence_object.tStart = t  # local t and not account for scr refresh
+            confidence_object.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(confidence_object, 'tStartRefresh')  # time at next scr refresh
+            confidence_object.setAutoDraw(True)
+        # *confidence_rating* updates
+        if confidence_rating.status == NOT_STARTED and t >= 0-frameTolerance:
+            # keep track of start time/frame for later
+            confidence_rating.frameNStart = frameN  # exact frame index
+            confidence_rating.tStart = t  # local t and not account for scr refresh
+            confidence_rating.tStartRefresh = tThisFlipGlobal  # on global time
+            win.timeOnFlip(confidence_rating, 'tStartRefresh')  # time at next scr refresh
+            confidence_rating.setAutoDraw(True)
+        continueRoutine &= confidence_rating.noResponse  # a response ends the trial
+        #if rating_no_force_end.status == FINISHED and object.status==FINISHED:
+        #    continueRoutine = False
+        
+        # check for quit (typically the Esc key)
+        if endExpNow or defaultKeyboard.getKeys(keyList=["escape"]):
+            core.quit()
+        
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in trial_confidence_routineComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+        
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+
+    stamp_onoffset('offset',BIO=BIO,SHOCK=False)
+    # -------Ending Routine "trial_confidence_routine"-------
+    for thisComponent in trial_confidence_routineComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    objects_loop.addData('confidence_object.started', confidence_object.tStartRefresh)
+    objects_loop.addData('confidence_object.stopped', confidence_object.tStopRefresh)
+    # store data for objects_loop (TrialHandler)
+    objects_loop.addData('confidence_rating.response', confidence_rating.getRating())
+    objects_loop.addData('confidence_rating.rt', confidence_rating.getRT())
+    objects_loop.addData('confidence_rating.started', confidence_rating.tStart)
+    objects_loop.addData('confidence_rating.stopped', confidence_rating.tStop)
+    if rating == 1:
+        trial_jitter_time = 6
+    else:
+        trial_jitter_time = 2
+    # the Routine "trial_confidence_routine" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+    
+
     # ------Prepare to start Routine "trial_scene_routine"-------
     # update component parameters for each repeat
     
-    mouse.setPos((0,0))
+    mouse.setPos((0,0.05))
     trial_scene_beach_1.setImage(beach_scene_1)
     trial_scene_beach_2.setImage(beach_scene_2)
     trial_scene_camp_1.setImage(camp_scene_1)
@@ -810,7 +871,7 @@ for thisObjects_loop in objects_loop:
         tThisFlipGlobal = win.getFutureFlipTime(clock=None)
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
-        if rating == 3:
+        if rating == 1:
             continueRoutine = False
         
         item_pos = mouse.getPos()
@@ -910,7 +971,7 @@ for thisObjects_loop in objects_loop:
     if len(trial_scene_pos.clicked_image):
         trial_scene = trial_scene_pos.clicked_image[-1]
     else:
-        rating = 3
+        rating = 1
         trial_scene = beach_scene_1
     
     objects_loop.addData('trial_scene_beach_1.started', trial_scene_beach_1.tStartRefresh)
@@ -947,7 +1008,7 @@ for thisObjects_loop in objects_loop:
     
     # ------Prepare to start Routine "trial_source_routine"-------
     # update component parameters for each repeat
-    if rating == 3:
+    if rating == 1:
         continueRoutine = False
     
     mouse.setPos((0,0.05))
@@ -979,7 +1040,7 @@ for thisObjects_loop in objects_loop:
         tThisFlipGlobal = win.getFutureFlipTime(clock=None)
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
-        if rating == 3:
+        if rating == 1:
             continueRoutine = False
         
         item_pos = mouse.getPos()
@@ -1195,14 +1256,7 @@ for thisScenes_loop in scenes_loop:
     #assigning the enc item
     scene_iti = 2
     scene_scene = scenes.path[scene]
-    item_pos = (0,0.1)
-    #log enc information to data file
-    #thisExp.addData('image_item', image_item2[enc_order2[enc_trial2]])
-    #thisExp.addData('emotion_item', emotion_item2[enc_order2[enc_trial2]])
-    #thisExp.addData('old_new', old_new2[enc_order2[enc_trial2]])
-    #thisExp.addData('size_item', size_item2[enc_order2[enc_trial2]])
-    #thisExp.addData('enc_trial', enc_trial2)
-    #thisExp.nextEntry()
+    item_pos = (0,0.05)
     
     #increment the current enc item counter
     scene = scene + 1

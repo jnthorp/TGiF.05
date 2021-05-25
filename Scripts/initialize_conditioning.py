@@ -6,15 +6,7 @@ import re
 import random
 import glob
 
-#exp_dir = os.path.join('/Users','jnthorp','Documents','TGIF')
-#exp_dir = os.path.join('/Users','john','Library','Mobile Documents','com~apple~CloudDocs','Documents','TGIF')
 exp_dir = os.getcwd()
-
-beach_scene = os.path.join(exp_dir,'Stimuli','conditioning','beach_scene.jpg') #pre-conditioning beach scene
-beach_sound = os.path.join(exp_dir, 'Stimuli', 'conditioning','beach_sounds','*') #directory of beach sounds
-
-camp_scene = os.path.join(exp_dir,'Stimuli','conditioning','camp_scene.jpg') #pre-conditioning camp scene
-camp_sound = os.path.join(exp_dir, 'Stimuli', 'conditioning','camp_sounds','*') #directory of camp sounds
 
 scene_alts = os.path.join(exp_dir,'Stimuli', 'conditioning','*alts','*','*') #directory of alternate scenes
 

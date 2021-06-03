@@ -70,7 +70,7 @@ os.chdir(_thisDir)
 
 # Store info about the experiment session
 psychopyVersion = '3.2.4'
-expName = 'test'  # from the Builder filename that created this script
+expName = 'test-demo'  # from the Builder filename that created this script
 expInfo = {'participant': '', 'session': '001'}
 dlg = gui.DlgFromDict(dictionary=expInfo, sortKeys=False, title=expName)
 if dlg.OK == False:

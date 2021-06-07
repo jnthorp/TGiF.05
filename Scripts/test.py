@@ -173,7 +173,7 @@ trial_jitter_cross = visual.TextStim(win=win, name='trial_jitter_cross',
     color='white', colorSpace='rgb', opacity=1, 
     languageStyle='LTR',
     depth=0.0);
-
+markerBlank = visual.TextStim(win, text='', units='norm')
 # Initialize components for Routine "trial_object_routine"
 trial_object_routineClock = core.Clock()
 object_object = visual.ImageStim(
@@ -184,7 +184,7 @@ object_object = visual.ImageStim(
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=0.0)
-object_rating = visual.RatingScale(win=win, name='object_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=2,  respKeys=['num_1','num_2'], labels=['New', 'Old'], scale='', singleClick=True, disappear=True)
+object_rating = visual.RatingScale(win=win, name='object_rating', marker=markerBlank, size=1.0, pos=[0.0, -0.85], low=1, high=2,  respKeys=['num_1','num_2'], labels=['New', 'Old'], scale='', singleClick=True, disappear=True)
 
 # Initialize components for Routine "trial_confidence_routine"
 trial_confidence_routineClock = core.Clock()
@@ -196,7 +196,7 @@ confidence_object = visual.ImageStim(
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=0.0)
-confidence_rating = visual.RatingScale(win=win, name='confidence_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=3,  respKeys=['num_1','num_2','num_3'], labels=['Guess', 'Low', 'High'], scale='', singleClick=True, disappear=True)
+confidence_rating = visual.RatingScale(win=win, name='confidence_rating', marker=markerBlank, size=1.0, pos=[0.0, -0.85], low=1, high=3,  respKeys=['num_1','num_2','num_3'], labels=['Guess', 'Low', 'High'], scale='', singleClick=True, disappear=True)
 
 # Initialize components for Routine "trial_scene_routine"
 trial_scene_routineClock = core.Clock()
@@ -301,7 +301,7 @@ scene_image = visual.ImageStim(
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=512, interpolate=True, depth=0.0)
-scene_rating = visual.RatingScale(win=win, name='scene_rating', marker='triangle', size=1.0, pos=[0.0, -0.85], low=1, high=2, respKeys=['num_1','num_2'], labels=['New', 'Old'], scale='', singleClick=True, disappear=True)
+scene_rating = visual.RatingScale(win=win, name='scene_rating', marker=markerBlank, size=1.0, pos=[0.0, -0.85], low=1, high=2, respKeys=['num_1','num_2'], labels=['New', 'Old'], scale='', singleClick=True, disappear=True)
 
 # Initialize components for Routine "end_screen"
 end_screenClock = core.Clock()

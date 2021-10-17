@@ -30,7 +30,7 @@ if __name__ == "__main__":
 		subprocess.call(python_call)
 
 	if args.section[1].endswith('scenes'):
-		script = os.path.join(scriptsDir, 'conditioning.py')
+		script = os.path.join(scriptsDir, 'conditioning-1.py')
 		python_call = ['python', script]
 		subprocess.call(python_call)
 

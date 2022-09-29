@@ -233,7 +233,7 @@ subj_num = int(expInfo['participant']) #read in the participant number
 subj_idx = counterbalance.subject == subj_num #index subj_num within the counterbalance df
 dataDir = os.path.join(expDir, 'Data', str(subj_num)) #location of the data directory for this subject
 cols = ['path','filename','beach','camp'] #columns for the stimuli df going forward
-
+stims = pd.DataFrame([], columns = cols)
 #add 32 repetitions of the pre-conditioning beach scene to the stimuli df
 beach_scene_tile = np.tile(beach_scene, int(trials/4))
 beach_scene_filename = np.tile([beach_scene[0].rsplit(os.sep,1)[1],beach_scene[1].rsplit(os.sep,1)[1]], int(trials/2))

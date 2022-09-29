@@ -29,7 +29,7 @@ df_all_stims = pd.DataFrame(list(zip(stims_full_path,
 df_all_stims.columns = cols
 
 subj_list = np.array(range(501,533))
-old = np.tile([1,2], 32)
+old = np.tile([1,1,2,2], 16)
 CSplus = np.tile(['beach','camp'], 32)
 counterbalance_df = pd.DataFrame(list(zip(subj_list,
                                           old,

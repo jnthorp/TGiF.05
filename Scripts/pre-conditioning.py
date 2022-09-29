@@ -758,7 +758,7 @@ for thisEvent in events:
         trial_item = subj_stims.path[trial]
         trial_x = 0
         trial_y = 0.05
-        trial_loc = [subj_stims.x[trial],subj_stims.y[trial]]
+        trial_loc = [trial_x, trial_y]
 
         #increment the current enc item counter
         trial = trial + 1

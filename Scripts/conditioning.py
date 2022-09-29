@@ -152,10 +152,9 @@ camp_scene_2 = os.path.join(expDir, 'Stimuli','conditioning','camp_scene-2.png')
 camp_scene = [camp_scene_1, camp_scene_2]
 camp_sound = os.path.join(expDir, 'Stimuli', 'conditioning','camp_sounds','*') #directory with the alternative camp scenes
 
-full_stim_path = os.path.join(expDir,'Lists','conditioning_scenes.csv') #csv with all the conditioning stims compiled by initialize_conditioning_stims.py
 counterbalance_path = os.path.join(expDir,'Lists','counterbalance.csv') #csv with subject-level counterbalance data
 
-trials = 96
+trials = 64
 
 # Initialize components for Routine "wait_routine"
 wait_routineClock = core.Clock()
@@ -223,7 +222,6 @@ routineTimer = core.CountdownTimer()  # to track time remaining of each (non-sli
 # update component parameters for each repeat
 
 #access the xls stimulus file
-full_stims = pd.read_csv(full_stim_path) #read in all the conditioning stims
 counterbalance = pd.read_csv(counterbalance_path) #read in the counterbalance csv
 
 #############
@@ -234,17 +232,13 @@ random.seed()
 subj_num = int(expInfo['participant']) #read in the participant number
 subj_idx = counterbalance.subject == subj_num #index subj_num within the counterbalance df
 dataDir = os.path.join(expDir, 'Data', str(subj_num)) #location of the data directory for this subject
-
-#read the stimuli from the proper group, as determined by counterbalance
-stims = full_stims[(full_stims.group == int(counterbalance.conditioning[subj_idx]))]
-stims = stims.drop(['group'], axis=1) #drop group from the stimuli df
 cols = ['path','filename','beach','camp'] #columns for the stimuli df going forward
 
-#add 24 repetitions of the pre-conditioning beach scene to the stimuli df
-beach_scene_tile = np.tile(beach_scene, int(trials/8))
-beach_scene_filename = np.tile([beach_scene[0].rsplit(os.sep,1)[1],beach_scene[1].rsplit(os.sep,1)[1]], int(trials/4))
-beach_beach_con = np.tile([True], int(trials/4))
-beach_camp_con = np.tile([False], int(trials/4))
+#add 32 repetitions of the pre-conditioning beach scene to the stimuli df
+beach_scene_tile = np.tile(beach_scene, int(trials/4))
+beach_scene_filename = np.tile([beach_scene[0].rsplit(os.sep,1)[1],beach_scene[1].rsplit(os.sep,1)[1]], int(trials/2))
+beach_beach_con = np.tile([True], int(trials/2))
+beach_camp_con = np.tile([False], int(trials/2))
 
 stims = stims.append(pd.DataFrame(list(zip(beach_scene_tile,
                                                             beach_scene_filename,
@@ -253,10 +247,10 @@ stims = stims.append(pd.DataFrame(list(zip(beach_scene_tile,
                                                    columns = cols))
 
 #add pre-conditioning camp scene to stimuli df
-camp_scene_tile = np.tile(camp_scene, int(trials/8))
-camp_scene_filename = np.tile([camp_scene[0].rsplit(os.sep,1)[1],camp_scene[1].rsplit(os.sep,1)[1]], int(trials/8))
-camp_beach_con = np.tile([False], int(trials/4))
-camp_camp_con = np.tile([True], int(trials/4))
+camp_scene_tile = np.tile(camp_scene, int(trials/4))
+camp_scene_filename = np.tile([camp_scene[0].rsplit(os.sep,1)[1],camp_scene[1].rsplit(os.sep,1)[1]], int(trials/2))
+camp_beach_con = np.tile([False], int(trials/2))
+camp_camp_con = np.tile([True], int(trials/2))
 
 stims = stims.append(pd.DataFrame(list(zip(camp_scene_tile,
                                                             camp_scene_filename,
@@ -283,7 +277,7 @@ stims["iti"] = (np.random.random(trials)-0.5)*2+7 #Determine the inter-trial int
 #determine which trials to shock
 CSplus = list(counterbalance.CSplus[subj_idx]) #find CSplus in counterbalance
 stims = stims.sort_values([CSplus[0],'filename']).reset_index(drop = True) #sort stims by the CSplus and by the filename type (alt or pre-conditioning)
-stims['shock'] = np.repeat([False,False,False,False,False,True,True,False], int(trials/8)) #add column of False and True, with CSplus being shocked 50% of the time, regardless of file type
+stims['shock'] = np.repeat([False,False,False,False,False,True,False,True], int(trials/8)) #add column of False and True, with CSplus being shocked 50% of the time, regardless of file type
 
 
 #While loop to shuffle stimuli so that:

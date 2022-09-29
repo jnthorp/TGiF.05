@@ -575,7 +575,7 @@ for thisEvent in events:
     routineTimer.reset()
     
     # ------Prepare to start Routine "event_onset_routine"-------
-    routineTimer.add(4.000000)
+    routineTimer.add(2.5)
     # update component parameters for each repeat
     event_onset_scene.setImage(event_scene)
     background_sound = sound.Sound(event_sound)
@@ -625,7 +625,7 @@ for thisEvent in events:
             event_onset_scene.setAutoDraw(True)
         if event_onset_scene.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > event_onset_scene.tStartRefresh + 4-frameTolerance:
+            if tThisFlipGlobal > event_onset_scene.tStartRefresh + 2.5-frameTolerance:
                 # keep track of stop time/frame for later
                 event_onset_scene.tStop = t  # not accounting for scr refresh
                 event_onset_scene.frameNStop = frameN  # exact frame index
@@ -682,9 +682,9 @@ for thisEvent in events:
         #Size2 = size_item2[enc_order2[enc_trial2]]
         trial_iti = subj_stims.iti[trial]
         trial_item = subj_stims.path[trial]
-        trial_x = subj_stims.x[trial]
-        trial_y = subj_stims.y[trial]
-        trial_loc = [subj_stims.x[trial],subj_stims.y[trial]]
+        trial_x = 0
+        trial_y = 0.05
+        trial_loc = [trial_x,trial_y]
         
         #log enc information to data file
         #thisExp.addData('image_item', image_item2[enc_order2[enc_trial2]])
@@ -877,7 +877,7 @@ for thisEvent in events:
                 trial_onset_object.setAutoDraw(True)
             if trial_onset_object.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > trial_onset_object.tStartRefresh + 4-frameTolerance:
+                if tThisFlipGlobal > trial_onset_object.tStartRefresh + 2.5-frameTolerance:
                     # keep track of stop time/frame for later
                     trial_onset_object.tStop = t  # not accounting for scr refresh
                     trial_onset_object.frameNStop = frameN  # exact frame index

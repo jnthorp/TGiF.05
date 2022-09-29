@@ -28,15 +28,13 @@ df_all_stims = pd.DataFrame(list(zip(stims_full_path,
                                      incon)))
 df_all_stims.columns = cols
 
-subj_list = np.array(range(101,131))
-old = np.tile([1,2], 30)
-CSplus = np.tile(['beach','camp'], 30)
-conditioning = np.tile([1,2],30)
+subj_list = np.array(range(501,533))
+old = np.tile([1,2], 32)
+CSplus = np.tile(['beach','camp'], 32)
 counterbalance_df = pd.DataFrame(list(zip(subj_list,
                                           old,
                                           CSplus,
-                                          conditioning
-                                         )), columns = ['subject', 'old','CSplus','conditioning'])
+                                         )), columns = ['subject', 'old','CSplus'])
 
 pd.DataFrame.to_csv(df_all_stims,os.path.join(exp_dir,'Lists','stim_list.csv'))
 pd.DataFrame.to_csv(counterbalance_df,os.path.join(exp_dir,'Lists','counterbalance.csv'))

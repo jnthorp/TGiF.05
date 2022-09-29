@@ -213,7 +213,7 @@ trial_onset_object = visual.ImageStim(
     win=win,
     name='trial_onset_object', 
     image='sin', mask=None,
-    ori=0, pos=[0,0], size=(0.33,0.33),
+    ori=0, pos=(0,0.5), size=(0.33,0.33),
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate = True, depth=-1.0)
@@ -317,12 +317,7 @@ subj_stims["shocked_context"] = np.tile(np.repeat([True,False], num_trialspevent
 
 #Shuffle the stimuli, then sort by event so that the order of congruent and incongruent stimuli is randomized across trials
 subj_stims = subj_stims.sample(frac=1).sort_values(by='event').reset_index(drop = True)
-subj_stims["iti"] = (np.random.random(num_trials)-0.5)*2+4 #Determine the inter-trial interval, between 3 and 5 seconds
-loc_range = np.array(range(-280,-50)) + np.array(range(50,280))
-rng = np.random.default_rng()
-subj_stims["x"] = rng.choice(loc_range, size = num_trials)/1000  #x location that the item will display at
-subj_stims["y"] = rng.choice(loc_range, size = num_trials)/1000 + 0.05 #y location that the item will display at
-
+subj_stims["iti"] = 2 #iti interval is always 2
 
 ###########Event variables#############
 #Generate the columns for the event dataframe, which is dependent on which context is CS+
@@ -656,7 +651,7 @@ for thisEvent in events:
     routineTimer.reset()
     
     # ------Prepare to start Routine "event_onset_routine"-------
-    routineTimer.add(4.000000)
+    routineTimer.add(2.5)
     # update component parameters for each repeat
     event_onset_scene.setImage(event_scene)
     background_sound = sound.Sound(event_sound)
@@ -706,7 +701,7 @@ for thisEvent in events:
             event_onset_scene.setAutoDraw(True)
         if event_onset_scene.status == STARTED:
             # is it time to stop? (based on global clock, using actual start)
-            if tThisFlipGlobal > event_onset_scene.tStartRefresh + 4-frameTolerance:
+            if tThisFlipGlobal > event_onset_scene.tStartRefresh + 2.5-frameTolerance:
                 # keep track of stop time/frame for later
                 event_onset_scene.tStop = t  # not accounting for scr refresh
                 event_onset_scene.frameNStop = frameN  # exact frame index
@@ -761,8 +756,8 @@ for thisEvent in events:
 
         trial_iti = subj_stims.iti[trial]
         trial_item = subj_stims.path[trial]
-        trial_x = subj_stims.x[trial]
-        trial_y = subj_stims.y[trial]
+        trial_x = 0
+        trial_y = 0.05
         trial_loc = [subj_stims.x[trial],subj_stims.y[trial]]
 
         #increment the current enc item counter
@@ -949,7 +944,7 @@ for thisEvent in events:
                 trial_onset_object.setAutoDraw(True)
             if trial_onset_object.status == STARTED:
                 # is it time to stop? (based on global clock, using actual start)
-                if tThisFlipGlobal > trial_onset_object.tStartRefresh + 4-frameTolerance:
+                if tThisFlipGlobal > trial_onset_object.tStartRefresh + 2.5-frameTolerance:
                     # keep track of stop time/frame for later
                     trial_onset_object.tStop = t  # not accounting for scr refresh
                     trial_onset_object.frameNStop = frameN  # exact frame index
